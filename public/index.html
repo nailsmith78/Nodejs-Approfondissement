@@ -73,13 +73,11 @@ const app = createApp({
     }
   },
   mounted() {
-      console.log('Mounted, layout initial:', this.layout);
     this.load()
   },
   methods: {
     async login() {
-        console.log('Login appelé avec:', this.email, this.password);
-
+       
       try {
     // 1️ Envoi des credentials au serveur
     const { token } = await axios
@@ -122,9 +120,8 @@ const app = createApp({
     },
     async load() {
       this.userToken = localStorage.getItem('token');
-      console.log('load() appelé, userToken:', this.userToken);
+     
       if (this.userToken) {
-        console.log('Token trouvé, layout passe à list');
         this.layout = 'list'
         const users = await axios.get('/api/users', {
           headers: {
@@ -136,7 +133,7 @@ const app = createApp({
       else {
           console.log('Pas de token, reste sur login');
       }
-      console.log('Socket initialisé, id:', socket.id);
+     
       socket.on('user:create', (data) => {
         this.users.push(data)
       })
@@ -160,7 +157,7 @@ const app = createApp({
       }).then(res => res.data)
     },
     initSocket() {
-    console.log('Initialisation Socket.IO');
+    
 
     this.socket = io(); // ou io('http://localhost:3000')
 

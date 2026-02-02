@@ -1,6 +1,6 @@
 class NotFoundError extends Error {
   status = 404;
-  constructor(message = "Not Found") {
+  constructor(message = "Not Found -- not-found.js") {
     super(message);
   }
 }

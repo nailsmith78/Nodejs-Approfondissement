@@ -33,9 +33,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", express.static("public"));
 
 
-app.use("/api/users", authMiddleware, userRouter);
+// endpoint public  
+app.get('/api/users/:userId/articles', usersController.getArticlesByUser);
 app.post("/login", usersController.login);
+
+// avec auth
+app.use("/api/users", authMiddleware, userRouter);
 app.use("/api/articles", articlesRouter);
+
+
 
 
 

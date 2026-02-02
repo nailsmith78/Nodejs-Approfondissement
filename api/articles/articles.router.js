@@ -4,10 +4,9 @@ const auth = require('../../middlewares/auth');
 const isAdmin = require('../../middlewares/isAdmin');
 const articlesController = require("./articles.controller");
 
-
-router.use(auth, isAdmin);
+router.use(auth);
 router.post("/", articlesController.create);
-router.put("/:id", articlesController.update);
-router.delete("/:id", articlesController.delete);
+router.put("/:id", isAdmin, articlesController.update);
+router.delete("/:id", isAdmin, articlesController.delete);
 
 module.exports = router;
