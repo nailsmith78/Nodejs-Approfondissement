@@ -27,6 +27,7 @@
           <input type="text" placeholder="Name" required v-model="newUser.name">
           <input type="text" placeholder="Email" required v-model="newUser.email">
           <input type="text" placeholder="Password" required v-model="newUser.password">
+          <input type="text" placeholder="Role" required v-model="newUser.role">
           <button class="contrast">Créer</button>
         </form>
         <h1>Utilisateur existant</h1>
@@ -36,14 +37,16 @@
               <th scope="col">#</th>
               <th scope="col">Name</th>
               <th scope="col">Email</th>
+              <th scope="col">Role</th>
               <th scope="col">Action</th>
-            </tr>
+              </tr>
           </thead>
           <tbody>
             <tr v-for="user in users">
               <td>{{ user._id }}</td>
               <td>{{ user.name }}</td>
               <td>{{ user.email }}</td>
+              <td>{{ user.role }}</td>
               <td><button @click="remove(user._id)">Supprimer</button></td>
             </tr>
           </tbody>
@@ -57,32 +60,71 @@ const { createApp } = Vue
 
 const socket = io()
 
-createApp({
+const app = createApp({
   data() {
     return {
       layout: 'login',
       email: '',
       password: '',
+      role: '',
       users: [],
       newUser: {},
       userToken: ''
     }
   },
   mounted() {
+      console.log('Mounted, layout initial:', this.layout);
     this.load()
   },
   methods: {
     async login() {
-      const { token } = await axios.post('/login', {
-        email: this.email,
-        password: this.password
-      }).then(res => res.data)
-      localStorage.setItem('token', token)
-      this.load()
+        console.log('Login appelé avec:', this.email, this.password);
+
+      try {
+    // 1️ Envoi des credentials au serveur
+    const { token } = await axios
+      .post('/login', { email: this.email, password: this.password })
+      .then(res => res.data);
+
+    // 2 Stockage du token
+    localStorage.setItem('token', token);
+    this.userToken = token;
+
+    // 3️ Changement immédiat du layout
+    this.layout = 'list';
+
+    // 4️ Charger les users seulement maintenant que le token est disponible
+    await this.loadUsers();
+
+    // 5️ Initialiser Socket.IO si pas encore fait
+    if (!this.socket) this.initSocket();
+
+  } catch (err) {
+    console.error(err);
+    alert('Login failed: ' + (err.response?.data?.message || err.message));
+  }
+    },
+    async loadUsers() {
+      if (!this.userToken) return;
+
+      try {
+        const users = await axios.get('/api/users', {
+          headers: { 'x-access-token': this.userToken }
+        }).then(res => res.data);
+
+        this.users = users;
+
+      } catch (err) {
+        console.error(err);
+        localStorage.removeItem('token');
+        this.layout = 'login';
+      }
     },
     async load() {
-      this.userToken = localStorage.getItem('token')
+      this.userToken = localStorage.getItem('token');
+      console.log('load() appelé, userToken:', this.userToken);
       if (this.userToken) {
+        console.log('Token trouvé, layout passe à list');
         this.layout = 'list'
         const users = await axios.get('/api/users', {
           headers: {
@@ -91,7 +133,10 @@ createApp({
         }).then(res => res.data)
         this.users = users
       }
-
+      else {
+          console.log('Pas de token, reste sur login');
+      }
+      console.log('Socket initialisé, id:', socket.id);
       socket.on('user:create', (data) => {
         this.users.push(data)
       })
@@ -113,7 +158,28 @@ createApp({
             'x-access-token': this.userToken
           }
       }).then(res => res.data)
-    }
+    },
+    initSocket() {
+    console.log('Initialisation Socket.IO');
+
+    this.socket = io(); // ou io('http://localhost:3000')
+
+    this.socket.on('connect', () => {
+      console.log('Socket connecté, id:', this.socket.id);
+    });
+
+    this.socket.on('user:create', (data) => {
+      console.log('user:create reçu', data);
+      this.users.push(data);
+    });
+
+    this.socket.on('user:delete', (data) => {
+      console.log('user:delete reçu', data);
+      this.users = this.users.filter(u => u._id !== data.id);
+    });
   }
-}).mount('#app')
+
+  }
+});
+app.mount('#app')
 </script>

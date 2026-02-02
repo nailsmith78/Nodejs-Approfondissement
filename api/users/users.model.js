@@ -28,6 +28,7 @@ const userSchema = Schema({
     enum: {
       values: ["admin", "member"],
       message: "{VALUE} inconnue",
+      default: "member"
     },
   },
   age: Number,

@@ -1,7 +1,7 @@
 const { server } = require("../server");
 const config = require("../config");
 const mongoose = require("mongoose");
-
+mongoose.set('strictQuery', true);
 mongoose.connect(config.mongoUri);
 
 const db = mongoose.connection;
