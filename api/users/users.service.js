@@ -19,11 +19,14 @@ class UserService {
     return User.deleteOne({ _id: id });
   }
   async checkPasswordUser(email, password) {
+    console.log("email/password ", email, ' ', password);
     const user = await User.findOne({ email });
+    console.log("check psw : ", user);
     if (!user) {
       return false;
     }
     const bool = await bcrypt.compare(password, user.password);
+    console.log("check cryt : ", bool);
     if (!bool) {
       return false;
     }

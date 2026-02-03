@@ -9,7 +9,6 @@ module.exports = async (req, res, next) => {
     if (!token) {
       throw "not token";
     }
-    console.log("Token reçu :", token);
 
     const decoded = jwt.verify(token, config.secretJwtToken);
 
@@ -17,7 +16,7 @@ module.exports = async (req, res, next) => {
     if (!user) {
       throw new NotFoundError();
     }
-    console.log("Token verifié :", user);
+
     req.user = user;
     next();
   } catch (message) {

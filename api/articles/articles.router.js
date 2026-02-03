@@ -9,4 +9,7 @@ router.post("/", articlesController.create);
 router.put("/:id", isAdmin, articlesController.update);
 router.delete("/:id", isAdmin, articlesController.delete);
 
+// test route pour recupérer tous les articles (test pour jest-recup donnée base)
+router.get("/", articlesController.getAll);
+
 module.exports = router;

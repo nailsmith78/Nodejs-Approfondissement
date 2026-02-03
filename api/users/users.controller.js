@@ -17,7 +17,9 @@ class UsersController {
   async getById(req, res, next) {
     try {
       const id = req.params.id;
+
       const user = await usersService.get(id);
+      console.log("req.params = ", req.params)
       if (!user) {
         throw new NotFoundError();
       }
@@ -61,12 +63,13 @@ class UsersController {
     try {
       const { email, password } = req.body;
       const userId = await usersService.checkPasswordUser(email, password);
+      console.log("userID => :", userId);
       if (!userId) {
         throw new UnauthorizedError();
       }
 
       const token = jwt.sign({ userId }, config.secretJwtToken, {
-        expiresIn: "3d",
+        expiresIn: "60d",
       });
       res.json({
         token,

@@ -41,11 +41,6 @@ app.post("/login", usersController.login);
 app.use("/api/users", authMiddleware, userRouter);
 app.use("/api/articles", articlesRouter);
 
-
-
-
-
-
 app.use((req, res, next) => {
   next(new NotFoundError());
 });
