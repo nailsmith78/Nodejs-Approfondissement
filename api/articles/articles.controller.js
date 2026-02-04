@@ -23,8 +23,6 @@ class ArticlesController {
         try {
             const id = req.params.id;
             const data = req.body;
-            console.log("req.params:", req.params);
-            console.log("req.body:", req.body);
             const articleModified = await articlesService.update(id, data);
             res.json(articleModified);
         } catch (err) {
@@ -44,7 +42,6 @@ class ArticlesController {
 
     async getAll(req, res, next) {
         try {
-            console.log("param ", req.params)
             const articles = await articlesService.getAll();
             res.json(articles)
         } catch (err) {

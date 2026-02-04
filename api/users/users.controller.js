@@ -19,7 +19,7 @@ class UsersController {
       const id = req.params.id;
 
       const user = await usersService.get(id);
-      console.log("req.params = ", req.params)
+      // console.log("req.params = ", req.params)
       if (!user) {
         throw new NotFoundError();
       }
@@ -63,7 +63,6 @@ class UsersController {
     try {
       const { email, password } = req.body;
       const userId = await usersService.checkPasswordUser(email, password);
-      console.log("userID => :", userId);
       if (!userId) {
         throw new UnauthorizedError();
       }

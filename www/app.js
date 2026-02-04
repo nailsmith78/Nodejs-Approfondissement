@@ -14,6 +14,7 @@ db.on("open", () => {
   console.log("Database connected");
 });
 
+
 server.listen(config.port, () => {
   console.log("app running");
 });

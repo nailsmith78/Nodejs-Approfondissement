@@ -8,7 +8,7 @@ const usersController = require("./api/users/users.controller");
 
 const articlesRouter = require("./api/articles/articles.router");
 const authMiddleware = require("./middlewares/auth");
-//require("./api/articles/articles.schema"); // temporaire
+require("./api/articles/articles.schema"); // temporaire
 const app = express();
 
 const server = http.createServer(app);

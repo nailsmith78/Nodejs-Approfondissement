@@ -4,6 +4,8 @@ const auth = require('../../middlewares/auth');
 const isAdmin = require('../../middlewares/isAdmin');
 const articlesController = require("./articles.controller");
 
+
+
 router.use(auth);
 router.post("/", articlesController.create);
 router.put("/:id", isAdmin, articlesController.update);
